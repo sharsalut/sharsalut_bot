@@ -1,15 +1,18 @@
-import os
-import json
 from telegram import ReplyKeyboardMarkup, Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters, ConversationHandler
 import gspread
 from telegram.ext import CallbackQueryHandler
+import os
+import json
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
-# === Google Sheets подключение ===
+# === Google Sheets подключение через переменную среды ===
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 credentials_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+if not credentials_json:
+    raise Exception("Переменная GOOGLE_CREDENTIALS_JSON не найдена!")
+
 creds_dict = json.loads(credentials_json)
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
